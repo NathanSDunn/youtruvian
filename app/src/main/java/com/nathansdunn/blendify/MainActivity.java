@@ -3,11 +3,15 @@ package com.nathansdunn.blendify;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,6 +25,8 @@ import android.widget.Toast;
 import com.nathansdunn.blendify.domain.PhotoSet;
 import com.nathansdunn.blendify.domain.RequestCode;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -88,11 +94,41 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, text);
     }
 
+    private int getPhotoId() {
+        if (activeButton == R.id.action_pic1) return 1;
+        else if (activeButton == R.id.action_pic2) return 2;
+
+        return 3;
+    }
+
     private void takePhoto() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, RequestCode.TAKE_PHOTO.getValue());
+            try {
+                File photoFile = photoSet.getPhoto(getPhotoId());
+                //Uri photoUri = FileProvider.getUriForFile(this,"com.nathansdunn.blendify",photoFile);
+                Uri photoUri = Uri.fromFile(photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+                startActivityForResult(takePictureIntent, RequestCode.TAKE_PHOTO.getValue());
+            } catch (IOException e) {
+                toast("Unable to load photo #"+getPhotoId()+" file: "+e.getMessage());
+            }
         }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RequestCode.TAKE_PHOTO.getValue() && resultCode == RESULT_OK) {
+            try {
+                displayPhoto();
+            } catch (IOException e) {
+                toast("Error displaying camera photo:" +e.getMessage());
+            }
+        }
+    }
+
+    private void displayPhoto() throws IOException {
+        Bitmap myBitmap = BitmapFactory.decodeFile(photoSet.getPhoto(getPhotoId()).getAbsolutePath());
+        imageView.setImageBitmap(myBitmap);
     }
 
 
