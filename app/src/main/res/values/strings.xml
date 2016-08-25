@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Blendify</string>
     <string name="action_settings">Settings</string>
+    <string name="action_pic1">1</string>
+    <string name="action_pic2">2</string>
+    <string name="action_blend">X</string>
+    <string name="action_contact">Share</string>
 </resources>
