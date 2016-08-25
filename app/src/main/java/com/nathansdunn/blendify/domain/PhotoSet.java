@@ -20,7 +20,7 @@ public class PhotoSet {
     private Photo photo2;
     private Photo photo3;
 
-    private File cameraDataDir;
+    private File folder;
 
     public PhotoSet(String id) {
         this.id = id;
@@ -28,9 +28,6 @@ public class PhotoSet {
 
     private File getStorage() {
         String sdcard = System.getenv("SECONDARY_STORAGE");
-        String state = Environment.getExternalStorageState();
-        String[] projection = new String[]{MediaStore.Images.ImageColumns._ID,MediaStore.Images.ImageColumns.DATA,MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.MIME_TYPE};
-        Uri u = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
 
         if ((sdcard == null) || (sdcard.length() == 0)) {
@@ -43,7 +40,7 @@ public class PhotoSet {
     }
 
     public void init() throws IOException {
-        File folder = getStorage();
+        folder = getStorage();
         if (!folder.exists()) {
             //create folder
             if (!folder.mkdirs()) {
@@ -67,11 +64,8 @@ public class PhotoSet {
 
     private Photo tempPhoto(int id) throws IOException {
         // Create an image file name
-        File file = File.createTempFile(
-                String.format("photo%d",id),  /* prefix */
-                ".jpg",         /* suffix */
-                cameraDataDir      /* directory */
-        );
+        File file = new File(folder +"/photo_"+id+".jpg");
+        boolean saved = file.createNewFile();
 
         // Save a file: path for use with ACTION_VIEW intents
         return new Photo(id, file);
