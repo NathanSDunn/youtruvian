@@ -4,10 +4,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -23,8 +21,6 @@ import android.widget.Toast;
 import com.nathansdunn.blendify.domain.PhotoSet;
 import com.nathansdunn.blendify.domain.RequestCode;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -32,10 +28,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "PhotoBlendActivity";
 
     private ActionBar actionBar;
+    private int activeButton = R.id.action_pic1;
     private ImageView imageView;
     private FloatingActionButton fab;
-    private PhotoSet photoSet;
 
+    private PhotoSet photoSet;
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
     @Override
@@ -109,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        activeButton = item.getItemId();
+        enableCamera(activeButton == R.id.action_pic1 || activeButton == R.id.action_pic2);
 
         switch (item.getItemId()) {
             case R.id.action_pic1: toast("1"); return true;
@@ -119,5 +118,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void enableCamera(boolean enabled) {
+        if (enabled) fab.setVisibility(View.VISIBLE);
+        else fab.setVisibility(View.INVISIBLE);
     }
 }
