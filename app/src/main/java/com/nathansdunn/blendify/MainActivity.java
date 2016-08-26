@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         onRestoreInstanceState(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -73,11 +74,7 @@ public class MainActivity extends AppCompatActivity {
             toast(e.getMessage());
         }
 
-        try {
-            displayImage(new File("/storage/sdcard0/DCIM/20160825_061542/photo_1.jpg"));
-        } catch (Exception e){
-            toast("Unable to display default photo");
-        }
+        displayImage();
     }
 
     private void requestPerms() {
@@ -116,15 +113,21 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        toast("Activity returned:" + timeStamp + ":"+ activeButton);
         if (requestCode == RequestCode.TAKE_PHOTO.getValue() && resultCode == RESULT_OK) {
-            try {
-                displayImage(photoSet.getPhoto(getPhotoId()));
-            } catch (IOException e) {
-                toast("Error displaying camera photo:" +e.getMessage());
-            }
+            displayImage();
+        }
+    }
+
+    private void displayImage() {
+        try {
+            int id = getPhotoId();
+            File photo = photoSet.getPhoto(getPhotoId());
+            displayImage(photo);
+        } catch (IOException e) {
+            toast("Unable to display image #"+getPhotoId()+":"+e.getMessage());
         }
     }
     private void displayImage(File image) throws IOException {
@@ -144,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         activeButton = item.getItemId();
         enableCamera(activeButton == R.id.action_pic1 || activeButton == R.id.action_pic2);
+        displayImage();
 
         switch (item.getItemId()) {
             case R.id.action_pic1: toast("1"); return true;
