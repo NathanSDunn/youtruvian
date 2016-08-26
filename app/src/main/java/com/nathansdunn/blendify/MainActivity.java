@@ -3,15 +3,12 @@ package com.nathansdunn.blendify;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,20 +29,22 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "PhotoBlendActivity";
+    private static final String TIMESTAMP_KEY = "timestamp";
+    private static final String ACTIVEBUTTON_KEY = "activebutton";
 
     private ActionBar actionBar;
-    private int activeButton = R.id.action_pic1;
     private ImageView imageView;
     private FloatingActionButton fab;
 
     private PhotoSet photoSet;
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    private String timeStamp;
+    private int activeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        onRestoreInstanceState(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
             toast(e.getMessage());
         }
 
+        try {
+            displayImage(new File("/storage/sdcard0/DCIM/20160825_061542/photo_1.jpg"));
+        } catch (Exception e){
+            toast("Unable to display default photo");
+        }
     }
 
     private void requestPerms() {
@@ -89,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void toast(String text) {
-
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
         Log.d(TAG, text);
     }
@@ -97,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
     private int getPhotoId() {
         if (activeButton == R.id.action_pic1) return 1;
         else if (activeButton == R.id.action_pic2) return 2;
-
         return 3;
     }
 
@@ -106,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             try {
                 File photoFile = photoSet.getPhoto(getPhotoId());
-                //Uri photoUri = FileProvider.getUriForFile(this,"com.nathansdunn.blendify",photoFile);
                 Uri photoUri = Uri.fromFile(photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 startActivityForResult(takePictureIntent, RequestCode.TAKE_PHOTO.getValue());
@@ -117,20 +118,19 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        toast("Activity returned:" + timeStamp + ":"+ activeButton);
         if (requestCode == RequestCode.TAKE_PHOTO.getValue() && resultCode == RESULT_OK) {
             try {
-                displayPhoto();
+                displayImage(photoSet.getPhoto(getPhotoId()));
             } catch (IOException e) {
                 toast("Error displaying camera photo:" +e.getMessage());
             }
         }
     }
-
-    private void displayPhoto() throws IOException {
-        Bitmap myBitmap = BitmapFactory.decodeFile(photoSet.getPhoto(getPhotoId()).getAbsolutePath());
-        imageView.setImageBitmap(myBitmap);
+    private void displayImage(File image) throws IOException {
+        Uri uri = Uri.fromFile(image);
+        imageView.setImageURI(uri);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -159,5 +159,21 @@ public class MainActivity extends AppCompatActivity {
     private void enableCamera(boolean enabled) {
         if (enabled) fab.setVisibility(View.VISIBLE);
         else fab.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        bundle.putString(TIMESTAMP_KEY, timeStamp);
+        bundle.putInt(ACTIVEBUTTON_KEY, activeButton);
+        super.onSaveInstanceState(bundle);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle bundle) {
+        if (bundle == null) bundle = new Bundle();
+        timeStamp = bundle.getString(TIMESTAMP_KEY, new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()));
+        activeButton = bundle.getInt(ACTIVEBUTTON_KEY);
+        if (activeButton == 0) activeButton = R.id.action_pic1;
+        super.onRestoreInstanceState(bundle);
     }
 }
