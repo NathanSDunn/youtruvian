@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.nathansdunn.blendify">
+    package="com.nathansdunn.youtruvian">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.nathansdunn.youtruvian.ui.PhotoBlendActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.nathansdunn.blendify"
+            android:authorities="com.nathansdunn.youtruvian"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

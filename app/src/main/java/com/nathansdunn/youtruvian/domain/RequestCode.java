@@ -1,4 +1,4 @@
-package com.nathansdunn.blendify.domain;
+package com.nathansdunn.youtruvian.domain;
 
 public enum RequestCode {
     NONE(0),

@@ -1,4 +1,4 @@
-package com.nathansdunn.blendify;
+package com.nathansdunn.youtruvian;
 
 import org.junit.Test;
 

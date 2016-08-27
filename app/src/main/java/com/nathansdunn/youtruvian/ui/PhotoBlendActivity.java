@@ -1,4 +1,4 @@
-package com.nathansdunn.blendify;
+package com.nathansdunn.youtruvian.ui;
 
 import android.Manifest;
 import android.content.Intent;
@@ -19,8 +19,9 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.nathansdunn.blendify.domain.PhotoSet;
-import com.nathansdunn.blendify.domain.RequestCode;
+import com.nathansdunn.youtruvian.R;
+import com.nathansdunn.youtruvian.domain.PhotoSet;
+import com.nathansdunn.youtruvian.domain.RequestCode;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -28,7 +29,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class PhotoBlendActivity extends AppCompatActivity {
     private static final String TAG = "PhotoBlendActivity";
     private static final String TIMESTAMP_KEY = "timestamp";
     private static final String ACTIVEBUTTON_KEY = "activebutton";
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         onRestoreInstanceState(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_photoblend);
 
         //configure picasso
         picasso = new Picasso.Builder(this).build();
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
-        getMenuInflater().inflate(R.menu.menu_main, toolbar.getMenu());
+        getMenuInflater().inflate(R.menu.menu_photoblend, toolbar.getMenu());
 
         //set up fab camera click button
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_photoblend, menu);
         actionBar.setDisplayShowTitleEnabled(false);
         return true;
     }
