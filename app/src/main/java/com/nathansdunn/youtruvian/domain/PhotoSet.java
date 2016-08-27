@@ -81,6 +81,12 @@ public class PhotoSet {
         fos.close();
     }
 
+    public String getContact(String key) {
+        String value = contact.get(key);
+        if (value == null) return "";
+        return value;
+    }
+
     private File getSetFolder() {
         return new File(getPath() + id);
     }

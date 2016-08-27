@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -23,6 +24,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nathansdunn.youtruvian.R;
@@ -99,6 +101,11 @@ public class PhotoBlendActivity extends AppCompatActivity {
         }
     }
 
+    private void showContact(String key, LinearLayout linearLayout, int editTextId) {
+        EditText editText = (EditText) linearLayout.findViewById(editTextId);
+        editText.setText(photoSet.getContact(key), TextView.BufferType.EDITABLE);
+    }
+
     private void showContactDetails() {
         final LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.contact_details, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
@@ -122,6 +129,11 @@ public class PhotoBlendActivity extends AppCompatActivity {
 
         builder.create()
                 .show();
+
+        showContact("facebook", linearLayout, R.id.facebook);
+        showContact("twitter", linearLayout, R.id.twitter);
+        showContact("instagram", linearLayout, R.id.instagram);
+        showContact("email", linearLayout, R.id.email);
     }
 
     private void requestPerms() {
@@ -133,6 +145,24 @@ public class PhotoBlendActivity extends AppCompatActivity {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE
                     },
                     RequestCode.CAMERA_PERMS.getValue());
+        }
+
+
+        if (ContextCompat.checkSelfPermission(
+                this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            toast("Requesting external storage permission");
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, RequestCode.WRITE_SD_PERMS.getValue());
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            if (requestCode == RequestCode.CAMERA_PERMS.getValue()) toast("Camera perms granted");
+            if (requestCode == RequestCode.WRITE_SD_PERMS.getValue()) toast("SD card perms granted");
+        } else {
+            toast("Grant permissions please or app will not work.");
         }
     }
 
