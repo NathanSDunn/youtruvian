@@ -49,8 +49,6 @@ public class PhotoSet {
             } else {
                 Log.d(TAG, "created directory:"+folder.getAbsoluteFile());
             }
-        } else {
-            throw new UnsupportedOperationException(String.format("Directory %s already exists", folder.getAbsoluteFile()));
         }
     }
 

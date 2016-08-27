@@ -147,12 +147,17 @@ public class PhotoBlendActivity extends AppCompatActivity {
     }
 
     private void blend(int alpha) {
-        Bitmap B = blendService.combineImages(
-                photoSet.getTestPhotoPath(1),
-                photoSet.getTestPhotoPath(2),
-                alpha);
-        imageView.setImageBitmap(B);
-        saveBlended(B);
+        toast("Blending...");
+        try {
+            Bitmap B = blendService.combineImages(
+                    photoSet.getPhotoPath(1),
+                    photoSet.getPhotoPath(2),
+                    alpha);
+            imageView.setImageBitmap(B);
+            saveBlended(B);
+        } catch (IOException e) {
+            toast(e.getMessage());
+        }
     }
 
     private void saveBlended(Bitmap blended) {
