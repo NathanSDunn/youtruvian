@@ -6,9 +6,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.3'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath group: 'com.neenbedankt.gradle.plugins',             name: 'android-apt',        version: project.ext.get('plugin.android.apt.version')
+        classpath group: 'me.tatarka',                                 name: 'gradle-retrolambda', version: project.ext.get('plugin.retrolambda.version')
+        //Frodo is used for logging Observables with the @RxLogObservable and @RxLogSubscriber Annotations
+        classpath group: 'com.fernandocejas.frodo',                    name: 'frodo-plugin',       version: project.ext.get('plugin.frodo.version')
+        //Hugo is used for logging methods with the @DebugLog Annotation
+        classpath group: 'com.jakewharton.hugo',                       name: 'hugo-plugin',        version: project.ext.get('plugin.hugo.version')
     }
 }
 
