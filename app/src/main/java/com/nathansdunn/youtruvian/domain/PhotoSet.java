@@ -4,10 +4,21 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by nathan on 25/08/16.
@@ -15,12 +26,59 @@ import java.io.OutputStream;
 public class PhotoSet {
     private static final String TAG = "PhotoSet";
     private static final String subDir = "/DCIM/youtruvian/";
+    private Gson gson = new Gson();
 
     private String id;
     private File folder;
+    private HashMap<String, String> contact;
 
-    public PhotoSet(String id) {
+    public PhotoSet(String id) throws IOException {
         this.id = id;
+        loadContact();
+    }
+
+    public void loadContact() throws IOException {
+        contact = new HashMap<>();
+        if (getContactFile().exists()) {
+            HashMap<Integer, String> map = null;
+            try
+            {
+                FileInputStream fis = new FileInputStream(getContactFile());
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                contact = (HashMap) gson.fromJson(
+                        (String) ois.readObject(),
+                        new TypeToken<HashMap<String, String>>(){}.getType());
+                ois.close();
+                fis.close();
+            } catch(ClassNotFoundException c)
+            {
+                System.out.println("Class not found");
+                c.printStackTrace();
+                return;
+            }
+        }
+    }
+
+    private File getContactFile() {
+        return new File(getSetFolder() + "/contact.txt");
+    }
+
+    public void addContact(String key, String value) throws IOException {
+        contact.put(key, value);
+        saveContact();
+    }
+
+    private void saveContact() throws IOException {
+        //http://beginnersbook.com/2013/12/how-to-serialize-hashmap-in-java/
+        File file = getContactFile();
+        if (file.exists()) {
+            file.createNewFile();
+        }
+        FileOutputStream fos = new FileOutputStream(file.getAbsoluteFile());
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(gson.toJson(contact));
+        oos.close();
+        fos.close();
     }
 
     private File getSetFolder() {

@@ -84,6 +84,14 @@ public class PhotoBlendActivity extends AppCompatActivity {
         }
     }
 
+    private void addContact(String key, String value) {
+        try {
+            photoSet.addContact(key, value);
+        } catch (IOException e) {
+            toast("Unable to save contact: "+key+"->"+value);
+        }
+    }
+
     private void requestPerms() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
