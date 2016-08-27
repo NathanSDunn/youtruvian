@@ -133,10 +133,11 @@ public class PhotoBlendActivity extends AppCompatActivity {
     }
 
     private void displayImage(File image) {
+        toast("Loading:"+image.getAbsoluteFile());
         Picasso.with(this)
-               .load(image)
-               .rotate(90f)
-               .into(imageView);
+                .load(image)
+                .rotate(90f)
+                .into(imageView);
     }
 
     @Override
