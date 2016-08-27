@@ -5,15 +5,15 @@
 
     <item
         android:id="@+id/action_pic1"
-        android:title="1"
+        android:title="@string/action_pic1"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_pic2"
-        android:title="2"
+        android:title="@string/action_pic2"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_blend"
-        android:title="3"
+        android:title="@string/action_blend"
         android:icon="@android:drawable/btn_star"
         app:showAsAction="always" />
     <item
