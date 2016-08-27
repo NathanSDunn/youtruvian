@@ -3,6 +3,7 @@ package com.nathansdunn.youtruvian.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,6 +24,7 @@ import com.nathansdunn.youtruvian.R;
 import com.nathansdunn.youtruvian.domain.PhotoSet;
 import com.nathansdunn.youtruvian.domain.RequestCode;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,8 +35,6 @@ public class PhotoBlendActivity extends AppCompatActivity {
     private static final String TAG = "PhotoBlendActivity";
     private static final String TIMESTAMP_KEY = "timestamp";
     private static final String ACTIVEBUTTON_KEY = "activebutton";
-
-    private Picasso picasso;
 
     private ActionBar actionBar;
     private ImageView imageView;
@@ -49,11 +49,6 @@ public class PhotoBlendActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         onRestoreInstanceState(savedInstanceState);
         setContentView(R.layout.activity_photoblend);
-
-        //configure picasso
-        picasso = new Picasso.Builder(this).build();
-        picasso.setIndicatorsEnabled(true);
-        picasso.setLoggingEnabled(true);
 
         //set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -130,7 +125,6 @@ public class PhotoBlendActivity extends AppCompatActivity {
 
     private void displayImage() {
         try {
-            int id = getPhotoId();
             File photo = photoSet.getPhoto(getPhotoId());
             displayImage(photo);
         } catch (IOException e) {
@@ -139,7 +133,7 @@ public class PhotoBlendActivity extends AppCompatActivity {
     }
 
     private void displayImage(File image) {
-        picasso.with(this)
+        Picasso.with(this)
                .load(image)
                .rotate(90f)
                .into(imageView);
