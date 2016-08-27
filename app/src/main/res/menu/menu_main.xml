@@ -24,7 +24,7 @@
     <item
         android:id="@+id/action_save"
         android:title="@string/action_contact"
-        android:icon="@android:drawable/ic_menu_save"
+        android:icon="@android:drawable/ic_menu_add"
         app:showAsAction="always" />
 
 </menu>

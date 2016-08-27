@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_pic2: toast("2"); return true;
             case R.id.action_blend: toast("blend"); return true;
             case R.id.action_contact: toast("contact"); return true;
-            case R.id.action_save: toast("save"); return true;
+            case R.id.action_save: onRestoreInstanceState(null); return true;
         }
 
         return super.onOptionsItemSelected(item);
