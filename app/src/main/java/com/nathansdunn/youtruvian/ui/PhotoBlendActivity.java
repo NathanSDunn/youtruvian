@@ -1,6 +1,7 @@
 package com.nathansdunn.youtruvian.ui;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -11,13 +12,17 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.nathansdunn.youtruvian.R;
@@ -84,12 +89,39 @@ public class PhotoBlendActivity extends AppCompatActivity {
         }
     }
 
-    private void addContact(String key, String value) {
+    private void addContact(String key, EditText editText) {
+        String value = editText.getText().toString();
+        if (value == null || value.equals("")) return;
         try {
             photoSet.addContact(key, value);
         } catch (IOException e) {
             toast("Unable to save contact: "+key+"->"+value);
         }
+    }
+
+    private void showContactDetails() {
+        final LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.contact_details, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setView(linearLayout)
+                .setTitle("Where should we send this?")
+                .setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        addContact("facebook", (EditText) linearLayout.findViewById(R.id.facebook));
+                        addContact("twitter", (EditText) linearLayout.findViewById(R.id.twitter));
+                        addContact("instagram", (EditText) linearLayout.findViewById(R.id.instagram));
+                        addContact("email", (EditText) linearLayout.findViewById(R.id.email));
+                    }
+                });
+
+        builder.create()
+                .show();
     }
 
     private void requestPerms() {
@@ -160,7 +192,6 @@ public class PhotoBlendActivity extends AppCompatActivity {
                     photoSet.getPhotoPath(1),
                     photoSet.getPhotoPath(2),
                     alpha);
-            toast("bitmapped");
             imageView.setImageBitmap(B);
             saveBlended(B);
         } catch (IOException e) {
@@ -189,13 +220,12 @@ public class PhotoBlendActivity extends AppCompatActivity {
         activeButton = item.getItemId();
         enableCamera(activeButton == R.id.action_pic1 || activeButton == R.id.action_pic2);
         displayImage();
-        //setImageViewVisibility(activeButton);
 
         switch (item.getItemId()) {
             case R.id.action_pic1: return true;
             case R.id.action_pic2: return true;
             case R.id.action_blend: blend(128); return true;
-            case R.id.action_contact: toast("contact"); return true;
+            case R.id.action_contact: showContactDetails(); return true;
             case R.id.action_save: reset(); return true;
         }
         return false;
