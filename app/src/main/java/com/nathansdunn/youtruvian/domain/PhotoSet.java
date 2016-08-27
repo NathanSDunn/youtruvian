@@ -23,7 +23,12 @@ public class PhotoSet {
         this.id = id;
     }
 
-    private File getStorage() {
+    private File getSetFolder() {
+        return new File(getPath() + id);
+    }
+
+    private String getPath() {
+
         String sdcard = System.getenv("SECONDARY_STORAGE");
 
         if ((sdcard == null) || (sdcard.length() == 0)) {
@@ -32,11 +37,11 @@ public class PhotoSet {
         if (sdcard == null) {
             sdcard = Environment.getExternalStorageDirectory().getAbsolutePath();
         }
-        return new File(sdcard + subDir + id);
+        return sdcard + subDir;
     }
 
     public void init() throws IOException {
-        folder = getStorage();
+        folder = getSetFolder();
         if (!folder.exists()) {
             //create folder
             if (!folder.mkdirs()) {
@@ -49,15 +54,19 @@ public class PhotoSet {
         }
     }
 
-    public File getPhoto(int id) throws IOException {
+    public File getPhotoFile(int id) throws IOException {
         // Create an image file name
-        File file = new File(folder +"/photo_"+id+".jpg");
+        File file = new File(getPhotoPath(id));
         if (!file.exists()) file.createNewFile();
         return file;
     }
 
+    public String getPhotoPath(int id) {
+        return folder +"/photo_"+id+".jpg";
+    }
+
     public void savePhoto(int id, Bitmap bitmap) throws IOException {
-        String loc = getPhoto(id).getAbsolutePath();
+        String loc = getPhotoFile(id).getAbsolutePath();
         if (loc != null) {
             try {
                 OutputStream os = new FileOutputStream(loc);
@@ -66,5 +75,13 @@ public class PhotoSet {
                 throw new IOException("Problem combining images: ", e);
             }
         }
+    }
+
+    public String getTestPhotoPath(int id) {
+        return getPath() + id + ".jpg";
+    }
+
+    public File getTestPhotoFile(int id) {
+        return new File(getPhotoPath(id));
     }
 }
