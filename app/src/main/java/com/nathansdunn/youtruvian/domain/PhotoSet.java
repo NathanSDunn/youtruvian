@@ -70,7 +70,7 @@ public class PhotoSet {
                 OutputStream os = new FileOutputStream(loc);
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
             } catch(IOException e) {
-                throw new IOException("Problem combining images: ", e);
+                throw new IOException("Problem saving image: ", e);
             }
         }
     }

@@ -40,25 +40,20 @@ public class BlendService {
             throw new IOException("Second 'T' Image must be taken!");
         }
 
-        int width = 0, height = 0;
-
-        /*
-
+        //build canvas that will fit both images
+        int width, height;
         if(c.getWidth() > s.getWidth()) {
             width = c.getWidth();
-            height = c.getHeight() + s.getHeight();
         } else {
             width = s.getWidth();
-            height = c.getHeight() + s.getHeight();
-        }*/
-
-        if (c != null) {
-            width = c.getWidth();
-            height = c.getHeight();
         }
 
+        if(c.getHeight() > s.getHeight()) {
+            height = c.getHeight();
+        } else {
+            height = s.getHeight();
+        }
         Bitmap cs = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
         Canvas comboImage = new Canvas(cs);
 
         Paint paint = new Paint();

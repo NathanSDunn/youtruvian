@@ -130,12 +130,11 @@ public class PhotoBlendActivity extends AppCompatActivity {
 
     private void displayImage() {
         try {
+            if (getPhotoId() > 2) return;
             File photo = photoSet.getPhotoFile(getPhotoId());
-            String path = photoSet.getTestPhotoPath(getPhotoId());
-            photo = new File(path);
             displayImage(photo);
         } catch (IOException e) {
-            toast("Unable to display image #"+getPhotoId()+":"+e.getMessage());
+            toast("Unable to load image #"+getPhotoId()+":"+e.getMessage());
         }
     }
 
@@ -153,6 +152,7 @@ public class PhotoBlendActivity extends AppCompatActivity {
                     photoSet.getPhotoPath(1),
                     photoSet.getPhotoPath(2),
                     alpha);
+            toast("bitmapped");
             imageView.setImageBitmap(B);
             saveBlended(B);
         } catch (IOException e) {
@@ -233,6 +233,7 @@ public class PhotoBlendActivity extends AppCompatActivity {
         timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         toast("New photo set:"+timeStamp);
         activeButton = R.id.action_pic1;
+        enableCamera(true);
 
         View pic2 = findViewById(R.id.action_pic2);
         View blend = findViewById(R.id.action_blend);
