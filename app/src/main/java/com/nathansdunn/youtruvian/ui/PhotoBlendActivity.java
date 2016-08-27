@@ -76,14 +76,12 @@ public class PhotoBlendActivity extends AppCompatActivity {
         //set up camera window
         imageView = (ImageView) findViewById(R.id.imageview);
 
-        try {
-            photoSet = new PhotoSet(timeStamp);
-            photoSet.init();
-        } catch (Exception e) {
-            toast(e.getMessage());
+        if (timeStamp == null) {
+            reset();
+        } else {
+            loadPhotoSet();
+            displayImage();
         }
-
-        displayImage();
     }
 
     private void requestPerms() {
@@ -166,7 +164,7 @@ public class PhotoBlendActivity extends AppCompatActivity {
             case R.id.action_pic2: toast("2"); return true;
             case R.id.action_blend: toast("blend"); return true;
             case R.id.action_contact: toast("contact"); return true;
-            case R.id.action_save: onRestoreInstanceState(null); return true;
+            case R.id.action_save: reset(); return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -184,16 +182,33 @@ public class PhotoBlendActivity extends AppCompatActivity {
         super.onSaveInstanceState(bundle);
     }
 
+    private void loadPhotoSet() {
+        try {
+            photoSet = new PhotoSet(timeStamp);
+            photoSet.init();
+        } catch (Exception e) {
+            toast(e.getMessage());
+        }
+        displayImage();
+    }
+
     @Override
     protected void onRestoreInstanceState(Bundle bundle) {
-        String currTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         if (bundle == null) {
             bundle = new Bundle();
-            toast("New photo set:"+currTime);
+        } else {
+            timeStamp = bundle.getString(TIMESTAMP_KEY);
         }
-        timeStamp = bundle.getString(TIMESTAMP_KEY, currTime);
+
         activeButton = bundle.getInt(ACTIVEBUTTON_KEY);
         if (activeButton == 0) activeButton = R.id.action_pic1;
         super.onRestoreInstanceState(bundle);
+    }
+
+    private void reset() {
+        timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        toast("New photo set:"+timeStamp);
+        activeButton = R.id.action_pic1;
+        loadPhotoSet();
     }
 }
