@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.nathansdunn.blendify.domain.PhotoSet;
 import com.nathansdunn.blendify.domain.RequestCode;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "PhotoBlendActivity";
     private static final String TIMESTAMP_KEY = "timestamp";
     private static final String ACTIVEBUTTON_KEY = "activebutton";
+
+    private Picasso picasso;
 
     private ActionBar actionBar;
     private ImageView imageView;
@@ -45,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         onRestoreInstanceState(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //configure picasso
+        picasso = new Picasso.Builder(this).build();
+        picasso.setIndicatorsEnabled(true);
+        picasso.setLoggingEnabled(true);
 
         //set up toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -130,9 +138,12 @@ public class MainActivity extends AppCompatActivity {
             toast("Unable to display image #"+getPhotoId()+":"+e.getMessage());
         }
     }
-    private void displayImage(File image) throws IOException {
-        Uri uri = Uri.fromFile(image);
-        imageView.setImageURI(uri);
+
+    private void displayImage(File image) {
+        picasso.with(this)
+               .load(image)
+               .rotate(90f)
+               .into(imageView);
     }
 
     @Override
@@ -174,8 +185,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onRestoreInstanceState(Bundle bundle) {
-        if (bundle == null) bundle = new Bundle();
-        timeStamp = bundle.getString(TIMESTAMP_KEY, new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()));
+        String currTime = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        if (bundle == null) {
+            bundle = new Bundle();
+            toast("New photo set:"+currTime);
+        }
+        timeStamp = bundle.getString(TIMESTAMP_KEY, currTime);
         activeButton = bundle.getInt(ACTIVEBUTTON_KEY);
         if (activeButton == 0) activeButton = R.id.action_pic1;
         super.onRestoreInstanceState(bundle);
